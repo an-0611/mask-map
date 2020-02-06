@@ -16,7 +16,7 @@ const SideBarContainer = styled.div`
 `
 
 const SideBarToggleBtn = styled.div`
-  position
+  // position
 `
 
 function SideBar() {
