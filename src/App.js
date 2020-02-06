@@ -7,7 +7,7 @@ const AppContainer = styled.div`
   text-align: center;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
 `
 
 function App() {
