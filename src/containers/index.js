@@ -1,11 +1,34 @@
-import React, { Fragment } from 'react';
+import React, { Component, Fragment } from 'react';
 import SideBar from '../components/SideBar';
 import SearchMap from '../components/SearchMap';
 // import ShopInfo from '../components/ShopInfo';
 
-const data = {
+const geoJson = {
     "type": "FeatureCollection",
     "features": [
+        {
+            "type": "Feature",
+            "properties": {
+                "id": "5901103272",
+                "name": "長安藥局",
+                "phone": "02 -27772740",
+                "address": "台北市中山區長安東路2段171－3號",
+                "mask_adult": 70,
+                "mask_child": 46,
+                "updated": "2020\n/02\n/07 16:23:35",
+                "available": "星期一上午看診、星期二上午看診、星期三上午看診、星期四上午看診、星期五上午看診、星期六上午看診、星期日上午休診、星期一下午看診、星期二下午看診、星期三下午看診、星期四下午看診、星期五下午看診、星期六下午看診、星期日下午休診、星期一晚上看診、星期二晚上看診、星期三晚上看診、星期四晚上看診、星期五晚上看診、星期六晚上看診、星期日晚上休診",
+                "note": "上午9:30-晚上10:30",
+                "custom_note": "",
+                "website": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    121.541786,
+                    25.048401
+                ]
+            }
+        },
         {
             "type": "Feature",
             "properties": {
@@ -156,34 +179,39 @@ const data = {
             ]
         }
       },
-
     ]
 };
 
-function MapContainer() {
-    let latitude, longitude;
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(position => {
-            const p = position.coords;
-            // console.log(p)
-            latitude = p.latitude;
-            longitude = p.longitude;
-            // console.log(latitude, longitude)
-            // this.$refs.hereMarker.mapObject.bindTooltip('You', {
-            //   offset: [0, -36],
-            //   permanent: true,
-            //   direction: 'top'
-            // })
+class MapContainer extends Component {
+    constructor(props) {
+      super(props);
+      this.state = {
+          geoJson: {},
+          fetchDataLoading: true,
+      };
+    }
+    
+    componentDidMount() {
+        const a = fetch('https://raw.githubusercontent.com/kiang/pharmacies/master/json/points.json').then(res => res.json());
+        a.then(geoJson => {
+            this.setState({
+                geoJson,
+                fetchDataLoading: false,
+            });
         });
     }
-    // console.log(latitude, longitude)
-    return (
-        <Fragment>
-            <SideBar />
-            <SearchMap latitude={latitude} longitude={longitude} data={data} />
-            {/* <ShopInfo /> */}
-        </Fragment>
-    );
+
+    render() {
+        // const { fetchDataLoading, geoJson } = this.state;
+        // if (fetchDataLoading) return <div>Loading...</div>;
+        return (
+            <Fragment>
+                <SideBar geoJson={geoJson} />
+                <SearchMap geoJson={geoJson} />
+                {/* <ShopInfo /> */}
+            </Fragment>
+        );
+    }
 }
 
 export default MapContainer;
