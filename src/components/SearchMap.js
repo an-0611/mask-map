@@ -123,7 +123,9 @@ class SearchMap extends Component {
         zoom={14}
         minZoom={13}
         maxZoom={18}
-        style={{ width: '100%', height: '100%' }}
+        style={{ width: '100%', height: '100%', marginTop: '20px' }}
+        // position='bottomright'
+        ZoomControl={false}
         // onClick={() => {}}
         // onViewportChanged={() => { console.log('change')}}
         // viewport={position}>
