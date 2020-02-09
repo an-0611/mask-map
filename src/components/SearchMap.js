@@ -10,7 +10,7 @@ import user from '../user.png';
 
 const icon = {
   "iconUrl": cross,
-  "iconSize": [16, 16],
+  "iconSize": [24, 24],
   "iconAnchor": [12, 41],
   "popupAnchor": [1, -34],
   "shadowSize": [41, 41]
@@ -18,7 +18,7 @@ const icon = {
 
 const userIcon = {
   "iconUrl": user,
-  "iconSize": [22, 22],
+  "iconSize": [25, 25],
   "iconAnchor": [12, 41],
   "popupAnchor": [1, -34],
   "shadowSize": [41, 41]
