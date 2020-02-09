@@ -142,7 +142,10 @@ class SearchMap extends Component {
               <Marker key={i} position={reverse(pharmacy.geometry.coordinates)} icon={L.icon(icon)}>
                 <Tooltip offset={[0, -36]}>
                   <div>{pharmacy.properties.name}</div>
-                  <div>{`電話：${pharmacy.properties.phone ? pharmacy.properties.phone : '無' }`}</div>
+                  { pharmacy.properties.phone ? 
+                    (<div>電話: <a href={`tel:${pharmacy.properties.phone}`}>{pharmacy.properties.phone}</a></div>)
+                    : <div>{`電話: '無' }`}</div>
+                  }
                   <div>{`地址：${pharmacy.properties.address ? pharmacy.properties.address : '無' }`}</div>
                   <div>{`成人口罩數量：${pharmacy.properties.mask_adult ? pharmacy.properties.mask_adult : '確認中'}`}</div>
                   <div>{`兒童口罩數量：${pharmacy.properties.mask_child ? pharmacy.properties.mask_child : '確認中'}`}</div>
