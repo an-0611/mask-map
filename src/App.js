@@ -3,11 +3,8 @@ import styled from 'styled-components';
 import MapContainer from './containers/index';
 
 const AppContainer = styled.div`
+  width: 100vw;
   height: 100vh;
-  text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
 `
 
 function App() {

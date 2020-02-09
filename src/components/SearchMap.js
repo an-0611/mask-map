@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import L from 'leaflet';
-import { Map, Marker, Popup, TileLayer } from 'react-leaflet';
+import { Map, Marker, TileLayer, Tooltip } from 'react-leaflet';
+import MarkerClusterGroup from 'react-leaflet-markercluster';
+import 'react-leaflet-markercluster/dist/styles.min.css';
+
 import 'leaflet/dist/leaflet.css';
 import cross from '../cross.png';
 import user from '../user.png';
@@ -15,7 +18,7 @@ const icon = {
 
 const userIcon = {
   "iconUrl": user,
-  "iconSize": [30, 30],
+  "iconSize": [22, 22],
   "iconAnchor": [12, 41],
   "popupAnchor": [1, -34],
   "shadowSize": [41, 41]
@@ -37,15 +40,15 @@ class SearchMap extends Component {
   }
 
   componentDidMount() {
+    // console.log(MarkerClusterGroup)
     const { geoJson } = this.props;
-    const geojsonLayer = L.geoJSON(geoJson, {
+    L.geoJSON(geoJson, {
       onEachFeature: this.onEachFeature,
-      pointToLayer: this.pointTolayer,
+      // pointToLayer: this.pointTolayer,
       // filter: this.filterFeatures,
     });
 
-    // geojsonLayer.addTo(Map);
-    console.log(geojsonLayer);
+    // console.log(geojsonLayer);
 
     // getmyselfposition to state
     this.getMyselfPosition().then(res => {
@@ -69,14 +72,14 @@ class SearchMap extends Component {
   }
 
   onEachFeature = (feature, layer) => {
-    if (feature.properties) {
-      // 點擊該maker出現的光箱
-      // assemble the HTML for the markers' popups (Leaflet's bindPopup method doesn't accept React JSX)
-      const popupContent = `<h3>'name'</h3>
-        <strong>Access to MTA lines: </strong>linestr`;
-      // add our popups
-      layer.bindPopup(popupContent);
-    }
+    // if (feature.properties) {
+    //   // 點擊該maker出現的光箱
+    //   // assemble the HTML for the markers' popups (Leaflet's bindPopup method doesn't accept React JSX)
+    //   const popupContent = `<h3>'name'</h3>
+    //     <strong>Access to MTA lines: </strong>linestr`;
+    //   // add our popups
+    //   layer.bindPopup(popupContent);
+    // }
   }
 
   pointTolayer = (feature, latlng) => {
@@ -108,34 +111,53 @@ class SearchMap extends Component {
     const { geoJson } = this.props;
     const { selfLoading, myselfPos } = this.state;
     if (!navigator.geolocation) return;
-    if (selfLoading) return <div>Loading...</div>;
+    if (selfLoading) return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', float: 'right' }}>
+        <div>Loading...</div>
+      </div>
+    );
+
     return (
       <Map
         center={myselfPos}
-        zoom={15}
+        zoom={14}
+        minZoom={13}
+        maxZoom={18}
         style={{ width: '100%', height: '100%' }}
-        onClick={() => {}}
-        onViewportChanged={() => { console.log('change')}}
+        // onClick={() => {}}
+        // onViewportChanged={() => { console.log('change')}}
         // viewport={position}>
-
       >
         <TileLayer url="https://api.tiles.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw" />
-        <Marker position={myselfPos} icon={L.icon(userIcon)} />
+        <Marker position={myselfPos} icon={L.icon(userIcon)} draggable={false} opacity={1}>
+          <Tooltip permanent offset={[0, -36]}>
+            <div>現在位置</div>
+          </Tooltip>
+        </Marker>
+
+        <MarkerClusterGroup disableClusteringAtZoom={16}>
         { geoJson.features.map((pharmacy, i) => (
-            <Marker key={i} position={reverse(pharmacy.geometry.coordinates)} icon={L.icon(icon)}>
-              <Popup style={{ textAlign: 'center' }}>
-                <div>{`名稱：${pharmacy.properties.name}`}</div>
-                <div>{`地址：${pharmacy.properties.address}`}</div>
-                <div>{`電話：${pharmacy.properties.address}`}</div>
-                <div>{`成人口罩剩餘數量：${pharmacy.properties.mask_adult}`}</div>
-                <div>{`兒童口罩剩餘數量：${pharmacy.properties.mask_child}`}</div>
-                <div>{`資料更新時間：${pharmacy.properties.updated}`}</div>
-                <div>{`營業時間：${pharmacy.properties.available}`}</div>
-                <div>{`備註：${pharmacy.properties.note}`}</div>
-              </Popup>
-            </Marker>
-          ))
-        }
+              <Marker key={i} position={reverse(pharmacy.geometry.coordinates)} icon={L.icon(icon)}>
+                <Tooltip offset={[0, -36]}>
+                  <div>{pharmacy.properties.name}</div>
+                  <div>{`電話：${pharmacy.properties.phone ? pharmacy.properties.phone : '無' }`}</div>
+                  <div>{`地址：${pharmacy.properties.address ? pharmacy.properties.address : '無' }`}</div>
+                  <div>{`成人口罩數量：${pharmacy.properties.mask_adult ? pharmacy.properties.mask_adult : '確認中'}`}</div>
+                  <div>{`兒童口罩數量：${pharmacy.properties.mask_child ? pharmacy.properties.mask_child : '確認中'}`}</div>
+                  <div>{`更新時間：${pharmacy.properties.updated ? pharmacy.properties.updated : '確認中'}`}</div>
+                </Tooltip>
+                {/* <Popup>
+                  <div>{pharmacy.properties.name}</div>
+                  <div>{`電話：${pharmacy.properties.phone ? pharmacy.properties.phone : '無' }`}</div>
+                  <div>{`地址：${pharmacy.properties.address ? pharmacy.properties.address : '無' }`}</div>
+                  <div>{`成人口罩數量：${pharmacy.properties.mask_adult ? pharmacy.properties.mask_adult : '確認中'}`}</div>
+                  <div>{`兒童口罩數量：${pharmacy.properties.mask_child ? pharmacy.properties.mask_child : '確認中'}`}</div>
+                  <div>{`更新時間：${pharmacy.properties.updated ? pharmacy.properties.updated : '確認中'}`}</div>
+                </Popup> */}
+              </Marker>
+            ))
+          }
+        </MarkerClusterGroup>
       </Map>
     );
   }
